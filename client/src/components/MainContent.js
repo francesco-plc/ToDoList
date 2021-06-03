@@ -9,7 +9,7 @@ import TasksTable from './TasksComponents';
 import TaskModal from './TaskModal';
 
 function MainContent(props) {
-  const {tasks, setTasks, addTask, deleteTask, updateTask, showSidebar, setShowSidebar, filter, setFilter } = props;
+  const {tasks, setTasks, addTask, deleteTask, updateTask, showSidebar, setShowSidebar, filter, changeFilter } = props;
   const [modalShow, setModalShow] = useState(false);
 
   return (
@@ -17,7 +17,7 @@ function MainContent(props) {
       <Container fluid>
         <Row className="vheight-100">
           <Col className="sideBar d-none d-sm-block" sm={4}>
-            <FilterMenu id="left-sidebar" showSidebar={showSidebar} setShowSidebar={setShowSidebar} filter={filter} setFilter={setFilter} />
+            <FilterMenu id="left-sidebar" showSidebar={showSidebar} setShowSidebar={setShowSidebar} filter={filter} changeFilter={changeFilter} />
           </Col>
           <Col className="mainPage mt-3" sm={8}>
             <TasksTable tasks={tasks} setTasks={setTasks} deleteTask={deleteTask} updateTask={updateTask} />

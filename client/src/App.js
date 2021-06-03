@@ -21,48 +21,49 @@ function App() {
   const routerHistory = useHistory();
 
   // Rehydrate tasks at mount time
-  useEffect(() => {
+  /* useEffect(() => {
     API.loadAllTasks().then((newT) => { setTasks(newT); });
-  }, []);
+  }, []);  */
 
   // Rehydrate tasks at mount time, and when tasks are updated
   useEffect(() => {
-    if ((tasks.length && dirty && filter === 'All') || filter === 'All') {
-      API.loadAllTasks().then((newT) => {
-        setTasks(newT);
-        setLoading(false);
-        setDirty(false);
-      });
+    if (dirty && filter === 'All') {
+      API.loadAllTasks()
+        .then((newT) => {
+          setTasks(newT);
+          setLoading(false);
+          setDirty(false);
+        }).catch((err) => console.log(err));
+    } else if (dirty && filter === 'Important') {
+      API.loadImportantTasks()
+        .then((newT) => {
+          setTasks(newT);
+          setLoading(false);
+          setDirty(false);
+        }).catch((err) => console.log(err));
+    } else if (dirty && filter === 'Today') {
+      API.loadTodayTasks()
+        .then((newT) => {
+          setTasks(newT);
+          setLoading(false);
+          setDirty(false);
+        }).catch((err) => console.log(err));
+    } else if (dirty && filter === 'Private') {
+      API.loadPrivateTasks()
+        .then((newT) => {
+          setTasks(newT);
+          setLoading(false);
+          setDirty(false);
+        }).catch((err) => console.log(err));
+    } else if (dirty && filter === 'Next7Days') {
+      API.loadNext7DaysTasks()
+        .then((newT) => {
+          setTasks(newT);
+          setLoading(false);
+          setDirty(false);
+        }).catch((err) => console.log(err));
     }
-    if ((tasks.length && dirty && filter === 'Important') || filter === 'Important') {
-      API.loadImportantTasks().then((newT) => {
-        setTasks(newT);
-        setLoading(false);
-        setDirty(false);
-      });
-    }
-    if ((tasks.length && dirty && filter === 'Today') || filter === 'Today') {
-      API.loadTodayTasks().then((newT) => {
-        setTasks(newT);
-        setLoading(false);
-        setDirty(false);
-      });
-    }
-    if ((tasks.length && dirty && filter === 'Private') || filter === 'Private') {
-      API.loadPrivateTasks().then((newT) => {
-        setTasks(newT);
-        setLoading(false);
-        setDirty(false);
-      });
-    }
-    if ((tasks.length && dirty && filter === 'Next7Days') || filter === 'Next7Days') {
-      API.loadNext7DaysTasks().then((newT) => {
-        setTasks(newT);
-        setLoading(false);
-        setDirty(false);
-      });
-    }
-  }, [tasks.length, dirty, filter]);
+  }, [dirty]);
 
   const addTask = (task) => {
     setTasks((oldTasks) => [...oldTasks, task]);
@@ -73,6 +74,8 @@ function App() {
   };
 
   const deleteTask = (id) => {
+    setTasks((currTasks) => currTasks.filter((task) => (task.id !== id)));
+
     API.deleteTask(id)
       .then(setDirty(true))
       .catch((err) => console.log(err));
@@ -89,10 +92,16 @@ function App() {
       .catch((err) => console.log(err));
   };
 
+  const changeFilter = (newFilter) => {
+    setTasks((currTasks) => currTasks.filter((t) => t.hasProperty(newFilter)));
+    setFilter(newFilter);
+    setDirty(true);
+  };
+
   const doLogIn = (username, password) => {
     API.logIn(username, password).then((name) => {
-      setLoggedIn(true);
       setUserInfo(name);
+      setLoggedIn(true);
       setShowAlert(true);
       routerHistory.push('/');
     }).catch((err) => {
@@ -103,6 +112,7 @@ function App() {
 
   const doLogOut = () => {
     API.logOut().then(() => {
+      setShowAlert(false);
       setLoggedIn(false);
       setUserInfo('');
     }).catch((err) => console.log(err));
@@ -114,7 +124,12 @@ function App() {
 
   return (
     <>
-      <NavBar loggedIn={loggedIn} showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+      <NavBar
+        loggedIn={loggedIn}
+        showSidebar={showSidebar}
+        setShowSidebar={setShowSidebar}
+        changeFilter={changeFilter}
+      />
       <div className="below-nav">
         {(showAlert && (
         <AccessAlert
@@ -139,7 +154,7 @@ function App() {
                       showSidebar={showSidebar}
                       setShowSidebar={setShowSidebar}
                       filter={filter}
-                      setFilter={setFilter}
+                      changeFilter={changeFilter}
                     />
                   )}
               </Route>
@@ -155,7 +170,7 @@ function App() {
                       showSidebar={showSidebar}
                       setShowSidebar={setShowSidebar}
                       filter={filter}
-                      setFilter={setFilter}
+                      changeFilter={changeFilter}
                     />
                   )}
               </Route>
@@ -171,7 +186,7 @@ function App() {
                       showSidebar={showSidebar}
                       setShowSidebar={setShowSidebar}
                       filter={filter}
-                      setFilter={setFilter}
+                      changeFilter={changeFilter}
                     />
                   )}
               </Route>
@@ -187,7 +202,7 @@ function App() {
                       showSidebar={showSidebar}
                       setShowSidebar={setShowSidebar}
                       filter={filter}
-                      setFilter={setFilter}
+                      changeFilter={changeFilter}
                     />
                   )}
               </Route>
@@ -203,7 +218,7 @@ function App() {
                       showSidebar={showSidebar}
                       setShowSidebar={setShowSidebar}
                       filter={filter}
-                      setFilter={setFilter}
+                      changeFilter={changeFilter}
                     />
                   )}
               </Route>
@@ -219,7 +234,7 @@ function App() {
                       showSidebar={showSidebar}
                       setShowSidebar={setShowSidebar}
                       filter={filter}
-                      setFilter={setFilter}
+                      changeFilter={changeFilter}
                     />
                   )}
               </Route>

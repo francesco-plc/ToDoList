@@ -5,7 +5,9 @@ import { iconLogo, iconUser } from './Icons';
 import FilterMenu from './FilterMenu';
 
 function NavBar(props) {
-  const { loggedIn, showSidebar, setShowSidebar } = props;
+  const {
+    loggedIn, showSidebar, setShowSidebar, changeFilter,
+  } = props;
   // eslint-disable-next-line no-unused-vars
   const [search, setSearch] = useState('');
   // eslint-disable-next-line no-unused-vars
@@ -54,7 +56,7 @@ function NavBar(props) {
       <NavLink to="/Account" className="text-info">{iconUser}</NavLink>
 
       {/* Navbar Menu */}
-      {loggedIn ? (<FilterMenu navbarMenu id="navbar-menu" showSidebar={showSidebar} setShowSidebar={setShowSidebar} />) : ''}
+      {loggedIn ? (<FilterMenu navbarMenu id="navbar-menu" showSidebar={showSidebar} setShowSidebar={setShowSidebar} changeFilter={changeFilter} />) : ''}
 
     </Navbar>
   );
