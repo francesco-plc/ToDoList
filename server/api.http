@@ -1,0 +1,55 @@
+//listTasks test - OK
+GET http://localhost:3001/api/tasks
+
+
+###
+
+//listImportant test - OK
+GET http://localhost:3001/api/tasks/important
+
+
+###
+
+//listPrivate test - OK
+GET http://localhost:3001/api/tasks/private
+
+
+###
+
+//listToday test - OK
+GET http://localhost:3001/api/tasks/today
+
+
+###
+
+//listNextSevenDays test - OK
+GET http://localhost:3001/api/tasks/seven
+
+
+###
+
+//addTask test - OK
+POST http://localhost:3001/api/tasks
+Content-Type: application/json
+
+{"description": "fix week2 tasks", "important": 1, "private" : 1, "deadline" : "2021-05-25 00:00" }
+
+###
+
+//updateTask test - OK
+PUT http://localhost:3001/api/tasks/update/28
+Content-Type: application/json
+
+{"description": "qwerty", "important": 0, "private" : 0, "deadline" : "2021-05-14 12:45"}
+
+
+###
+
+//setState test - OK
+PUT http://localhost:3001/api/tasks/1
+
+
+###
+
+//deleteTask test - OK
+DELETE http://localhost:3001/api/tasks/10
