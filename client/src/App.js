@@ -25,6 +25,15 @@ function App() {
     API.loadAllTasks().then((newT) => { setTasks(newT); });
   }, []);  */
 
+  useEffect(() => {
+    API.getUserInfo().then((user) => {
+      setUserInfo(user.name);
+      setLoggedIn(true);
+      setLoading(true);
+      setDirty(true);
+    }).catch((err) => console.log(err));
+  }, []);
+
   // Rehydrate tasks at mount time, and when tasks are updated
   useEffect(() => {
     if (dirty) {
