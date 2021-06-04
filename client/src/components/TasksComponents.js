@@ -13,28 +13,12 @@ import Task from '../models/Task';
 dayjs.extend(isBetween);
 
 function TasksTable(props) {
-  const { tasks, setTasks, deleteTask, updateTask } = props;
+  const { tasks, deleteTask, updateTask } = props;
 
-  /* const { filter } = useParams(); */
-  const query = useQuery();
-  const filter = query.get('filter');
-
-  const filterTask = (task) => {
-    const today = dayjs();
-    if (!filter || filter === 'all') return true;
-    if (filter === 'important') return task.important;
-    if (filter === 'today') return task.deadline.isSame(today, 'd');
-    if (filter === 'seven') {
-      return task.deadline.isValid()
-      && task.deadline.isBetween(today, today.add(6, 'd'), 'd', '[]');
-    }
-    if (filter === 'private') return task.private;
-    return false;
-  };
   return (
     <Table id="task-table" variant="light">
       <tbody>
-        {tasks.map((task) => (
+        { tasks.map((task) => (
           <TaskRow key={task.id} task={task} updateTask={updateTask} deleteTask={deleteTask} />
         ))}
       </tbody>

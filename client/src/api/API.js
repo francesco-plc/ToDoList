@@ -2,13 +2,23 @@ import Task from '../models/Task';
 
 const url = 'http://localhost:3000';
 
-async function loadAllTasks() {
-  const response = await fetch(`${url}/api/tasks`);
-  const tasksJSON = await response.json();
-  if (response.ok) {
-    const tasks = tasksJSON.map((json) => Task.from(json));
-    return tasks;
-  } return { err: 'GET error' };
+function loadAllTasks(filter = 'All') {
+  let urlToFetch;
+  if (filter === 'All') urlToFetch = `${url}/api/tasks`;
+  else if (filter === 'Important') urlToFetch = `${url}/api/tasks/important`;
+  else if (filter === 'Today') urlToFetch = `${url}/api/tasks/today`;
+  else if (filter === 'Next7Days') urlToFetch = `${url}/api/tasks/seven`;
+  else if (filter === 'Private') urlToFetch = `${url}/api/tasks/private`;
+  return new Promise((resolve, reject) => {
+    fetch(urlToFetch).then((response) => {
+      if (response.ok) {
+        response.json().then((json) => {
+          const tasks = json.map((taskJson) => Task.from(taskJson));
+          resolve(tasks);
+        }).catch((err) => reject(err));
+      } else reject();
+    }).catch((err) => reject(err));
+  });
 }
 
 async function addNewTask(task) {
@@ -70,6 +80,14 @@ function updateTask(task) {
     }); // connection errors
   });
 }
+/*
+async function loadAllTasks() {
+  const response = await fetch(`${url}/api/tasks`);
+  const tasksJSON = await response.json();
+  if (response.ok) {
+    return tasksJSON.map((json) => Task.from(json));
+  } return { err: 'GET error' };
+}
 
 async function loadImportantTasks() {
   const response = await fetch(`${url}/api/tasks/important`);
@@ -104,7 +122,7 @@ async function loadPrivateTasks() {
     const tasks = tasksJSON.map((json) => Task.from(json));
     return tasks;
   } return { err: 'GET error' };
-}
+} */
 
 function getUserInfo() {
   return new Promise((resolve, reject) => {
@@ -158,10 +176,10 @@ const API = {
   addNewTask,
   deleteTask,
   updateTask,
-  loadImportantTasks,
+  /* loadImportantTasks,
   loadTodayTasks,
   loadNext7DaysTasks,
-  loadPrivateTasks,
+  loadPrivateTasks, */
   getUserInfo,
   logIn,
   logOut,

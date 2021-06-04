@@ -11,8 +11,8 @@ import AccessAlert from './components/AccessAlert';
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [dirty, setDirty] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [dirty, setDirty] = useState(false);
   const [filter, setFilter] = useState('All');
   const [showSidebar, setShowSidebar] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -27,41 +27,18 @@ function App() {
 
   // Rehydrate tasks at mount time, and when tasks are updated
   useEffect(() => {
-    if (dirty && filter === 'All') {
-      API.loadAllTasks()
-        .then((newT) => {
-          setTasks(newT);
+    if (dirty) {
+      API.loadAllTasks(filter)
+        .then((fecthedTasks) => {
+          console.log('Load Tasks');
+          setTasks(fecthedTasks);
           setLoading(false);
           setDirty(false);
-        }).catch((err) => console.log(err));
-    } else if (dirty && filter === 'Important') {
-      API.loadImportantTasks()
-        .then((newT) => {
-          setTasks(newT);
+        }).catch((err) => {
           setLoading(false);
           setDirty(false);
-        }).catch((err) => console.log(err));
-    } else if (dirty && filter === 'Today') {
-      API.loadTodayTasks()
-        .then((newT) => {
-          setTasks(newT);
-          setLoading(false);
-          setDirty(false);
-        }).catch((err) => console.log(err));
-    } else if (dirty && filter === 'Private') {
-      API.loadPrivateTasks()
-        .then((newT) => {
-          setTasks(newT);
-          setLoading(false);
-          setDirty(false);
-        }).catch((err) => console.log(err));
-    } else if (dirty && filter === 'Next7Days') {
-      API.loadNext7DaysTasks()
-        .then((newT) => {
-          setTasks(newT);
-          setLoading(false);
-          setDirty(false);
-        }).catch((err) => console.log(err));
+          console.log(err);
+        });
     }
   }, [dirty]);
 
@@ -103,6 +80,8 @@ function App() {
       setUserInfo(name);
       setLoggedIn(true);
       setShowAlert(true);
+      setLoading(true);
+      setDirty(true);
       routerHistory.push('/');
     }).catch((err) => {
       setShowAlert(true);

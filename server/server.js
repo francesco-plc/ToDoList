@@ -54,43 +54,48 @@ app.use(passport.session());
 
 // Retrieve the list of ALL the tasks
 app.get('/api/tasks', isLoggedIn, (req, res) => {
-  dao.listTasks()
+  const userId = req.user.id;
+  dao.listTasks(userId)
     .then((tasks) => { res.json(tasks); })
     .catch((error) => { res.status(500).json(error); });
 });
 
 // Retrieve the list of all the IMPORTANT tasks
 app.get('/api/tasks/important', isLoggedIn, (req, res) => {
-  dao.listImportant()
+  const userId = req.user.id;
+  dao.listImportant(userId)
     .then((tasks) => { res.json(tasks); })
     .catch((error) => { res.status(500).json(error); });
 });
 
 // Retrieve the list of all the PRIVATE tasks
 app.get('/api/tasks/private', isLoggedIn, (req, res) => {
-  dao.listPrivate()
+  const userId = req.user.id;
+  dao.listPrivate(userId)
     .then((tasks) => { res.json(tasks); })
     .catch((error) => { res.status(500).json(error); });
 });
 
 // Retrieve the list of all the TODAY tasks
 app.get('/api/tasks/today', isLoggedIn, (req, res) => {
-  dao.listToday()
+  const userId = req.user.id;
+  dao.listToday(userId)
     .then((tasks) => { res.json(tasks); })
     .catch((error) => { res.status(500).json(error); });
 });
 
 // Retrieve the list of all the LAST 7 DAYS tasks
 app.get('/api/tasks/seven', isLoggedIn, (req, res) => {
-  dao.listNextSevenDays()
+  const userId = req.user.id;
+  dao.listNextSevenDays(userId)
     .then((tasks) => { res.json(tasks); })
     .catch((error) => { res.status(500).json(error); });
 });
 
 // Create a new task
 app.post('/api/tasks', isLoggedIn, async (req, res) => {
+  const userId = req.user.id;
   const newDeadline = req.body.deadline === '' ? null : req.body.deadline;
-
   const task = {
     description: req.body.description,
     important: req.body.important,
@@ -99,7 +104,7 @@ app.post('/api/tasks', isLoggedIn, async (req, res) => {
   };
 
   try {
-    await dao.addTask(task);
+    await dao.addTask(userId, task);
     res.status(201).end();
   } catch (err) {
     res.status(503).json({ error: `Database error during the creation of task: ${task.description}.` });
@@ -108,6 +113,8 @@ app.post('/api/tasks', isLoggedIn, async (req, res) => {
 
 // update a task
 app.put('/api/tasks/update/:id', isLoggedIn, async (req, res) => {
+  const userId = req.user.id;
+  const taskId = req.params.id;
   const newDeadline = req.body.deadline === '' ? null : req.body.deadline;
 
   const task = {
@@ -117,10 +124,8 @@ app.put('/api/tasks/update/:id', isLoggedIn, async (req, res) => {
     deadline: newDeadline,
     completed: req.body.completed,
   };
-
-  // you can also check here if the code passed in the URL matches with the code in req.body
   try {
-    await dao.updateTask(task, req.params.id);
+    await dao.updateTask(userId, taskId, task);
     res.status(200).end();
   } catch (err) {
     res.status(503).json({ error: `Database error during the update of task: ${task.description}.` });
@@ -129,8 +134,11 @@ app.put('/api/tasks/update/:id', isLoggedIn, async (req, res) => {
 
 // mark a task as completed/uncompleted
 app.put('/api/tasks/:id', isLoggedIn, async (req, res) => {
+  const userId = req.user.id;
+  const taskId = req.params.id;
+
   try {
-    await dao.setState(req.params.id);
+    await dao.setState(userId, taskId);
     res.status(204).end();
   } catch (err) {
     res.status(503).json({ error: `Database error during the updating of the status of task: ${req.params.id}.` });
@@ -139,8 +147,11 @@ app.put('/api/tasks/:id', isLoggedIn, async (req, res) => {
 
 // delete a task
 app.delete('/api/tasks/:id', isLoggedIn, async (req, res) => {
+  const userId = req.user.id;
+  const taskId = req.params.id;
+
   try {
-    await dao.deleteTask(req.params.id);
+    await dao.deleteTask(userId, taskId);
     res.status(204).end();
   } catch (err) {
     res.status(503).json({ error: `Database error during the deletion of task: ${req.params.id}.` });
