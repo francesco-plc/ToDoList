@@ -111,6 +111,6 @@ Request body: An object representing a task (Content-Type: application/json).
 }
 ```
 
-Response: 201 Created (success) or 503 Service Unavailable. 
+Response: `200 OK` or `503 Service Unavailable`. 
 
 Response body: None
