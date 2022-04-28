@@ -1,6 +1,6 @@
 # BigLab 2 - Class: 2021 WA1
 
-## Team name: TEAM_NAME
+## Team name: WAP-Team
 
 Team members:
 * s281697 ERNESTO CRISTIAN
